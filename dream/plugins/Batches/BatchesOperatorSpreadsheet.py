@@ -1,6 +1,6 @@
 from dream.plugins import plugin
 import xlwt
-import StringIO
+import io
 
 class BatchesOperatorSpreadsheet(plugin.OutputPreparationPlugin):
   """ Output the schedule of operators in an Excel file to be downloaded
@@ -41,7 +41,7 @@ class BatchesOperatorSpreadsheet(plugin.OutputPreparationPlugin):
                 time=record['time']
                 allocation=record['allocation']
                 machineId=None
-                if operator in allocation.keys():
+                if operator in list(allocation.keys()):
                     machineId=allocation[operator]
                 operatorSchedule.append([time,machineId])
     
@@ -58,7 +58,7 @@ class BatchesOperatorSpreadsheet(plugin.OutputPreparationPlugin):
                 k+=1  
         
         # output the results in excel
-        for operator in normalizedSchedule.keys():
+        for operator in list(normalizedSchedule.keys()):
             scheduleSheet.write(rowIndex,0,operator,PBstyle)
             for record in normalizedSchedule[operator]:
                 # skip the records that have 'None'
@@ -70,7 +70,7 @@ class BatchesOperatorSpreadsheet(plugin.OutputPreparationPlugin):
                 rowIndex+=1
     
     # return the workbook as encoded
-    scheduleStringIO = StringIO.StringIO()
+    scheduleStringIO = io.StringIO()
     scheduleFile.save(scheduleStringIO)
     encodedScheduleFile=scheduleStringIO.getvalue().encode('base64') 
     data['result']['result_list'][-1][self.configuration_dict['output_id']] = {

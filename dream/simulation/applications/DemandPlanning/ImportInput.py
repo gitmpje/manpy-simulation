@@ -22,7 +22,7 @@ Created on 24 Nov 2014
 @author: Anna
 '''
 
-from Globals import G
+from .Globals import G
 import xlrd
 from copy import deepcopy
 
@@ -89,7 +89,7 @@ def ImportInput(input, algorithmAttributes):
         w += 1
         
     if w == sh.ncols:
-        print "please enter a valid week value"
+        print("please enter a valid week value")
         return "stop"
     
     refCap = {}
@@ -209,7 +209,7 @@ def ImportInput(input, algorithmAttributes):
         G.orders[orderID]['sp'] = withoutFormat(row,0,sh,0)
         maList = withoutFormat(row,1,sh,0)
         maList = my_split(maList, ['; ', ';'])
-        print 'malist', maList
+        print('malist', maList)
         maList.remove('')
         G.orders[orderID]['MAlist'] = maList
         
@@ -257,7 +257,7 @@ def ImportInput(input, algorithmAttributes):
             maSuggested.append(withoutFormat(subRow+row,3,sh,0))
             subRow += 1
         
-        print 'ma sug', maSuggested, subRow
+        print('ma sug', maSuggested, subRow)
         oID = 1
         orderID = 'Forecast_'+str(oID)
         for week in range(4,sh.ncols):        
@@ -289,7 +289,7 @@ def ImportInput(input, algorithmAttributes):
         row += subRow+1
     
     # set 
-    for sp in G.SPlist.keys():
+    for sp in list(G.SPlist.keys()):
         G.globalMAAllocationIW[sp] = {}
         for week in G.WeekList:
             G.globalMAAllocationIW[sp][week] = {'order':{}, 'forecast':{}}
@@ -316,13 +316,13 @@ def ImportInput(input, algorithmAttributes):
     for week in G.WeekList:
         G.Lateness[week] = {}
         G.Earliness[week] = {}
-        for sp in G.SPlist.keys():
+        for sp in list(G.SPlist.keys()):
             for ma in G.SPlist[sp]:
                 G.Lateness[week][ma] = {'qty':[], 'lateness':[]}
                 G.Earliness[week][ma] = {'qty':[], 'earliness':[]}
 
     # set excess results
-    for sp in G.SPlist.keys():
+    for sp in list(G.SPlist.keys()):
         G.Excess[sp] = {}
         for week in G.WeekList:
             G.Excess[sp][week] = 0

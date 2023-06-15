@@ -21,7 +21,7 @@ import sys
 import os
 import argparse
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import xlrd
 import traceback
 import multiprocessing
@@ -65,9 +65,9 @@ def positionGraph():
 
   graph = pydot.Dot()
 
-  for node_id, node in request.json['nodes'].iteritems():
+  for node_id, node in request.json['nodes'].items():
     graph.add_node(pydot.Node(node_id))
-  for edge in request.json['edges'].itervalues():
+  for edge in request.json['edges'].values():
     graph.add_edge(pydot.Edge(edge[0], edge[1]))
 
   new_graph = pydot.graph_from_dot_data(graph.create_dot())
@@ -114,8 +114,8 @@ def _runWithTimeout(queue, func, args, kw):
 
   if hasattr(signal, 'SIGUSR1'):
     signal.signal(signal.SIGUSR1, lambda sig, stack: traceback.print_stack(stack))
-    print "To see current traceback:"
-    print "  kill -SIGUSR1 %s" % os.getpid()
+    print("To see current traceback:")
+    print("  kill -SIGUSR1 %s" % os.getpid())
 
   # print a traceback when terminated.
   def handler(sig, stack):
@@ -180,7 +180,7 @@ def runKnowledgeExtraction():
 def _runKnowledgeExtraction(parameter_dict):
   try:
     workbook = xlrd.open_workbook(
-        file_contents=urllib.urlopen(parameter_dict['general']['ke_url']).read())
+        file_contents=urllib.request.urlopen(parameter_dict['general']['ke_url']).read())
     worksheets = workbook.sheet_names()
     worksheet_ProcessingTimes = worksheets[0]   #It defines the worksheet_ProcessingTimes as the first sheet of the Excel file
 
@@ -192,7 +192,7 @@ def _runKnowledgeExtraction(parameter_dict):
 #     nodes = data['nodes'] 
     nodes = data['graph']['node']
 
-    for station, values in ProcessingTimes.items():             #This loop searches the elements of the Excel imported data and if these elements exist in json file append the distribution fitting results in a dictionary   
+    for station, values in list(ProcessingTimes.items()):             #This loop searches the elements of the Excel imported data and if these elements exist in json file append the distribution fitting results in a dictionary   
       if station in nodes: 
         temp= B.ks_test(values)
         dist=temp['distributionType']
@@ -202,7 +202,7 @@ def _runKnowledgeExtraction(parameter_dict):
         pprint(temp)
         parameter_dict['graph']['node'][station]['processingTime'] = temp
     return dict(success=True, data=parameter_dict)
-  except Exception, e:
+  except Exception as e:
     tb = traceback.format_exc()
     app.logger.error(tb)
     return dict(error=tb)

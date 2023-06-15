@@ -88,7 +88,7 @@ def createObjectResourcesAndCoreObjects():
     def getSuccessorList(node_id, predicate=lambda source, destination, edge_class, edge_data: True):
       successor_list = []                           # dummy variable that holds the list to be returned
       
-      for edge in edges.values():
+      for edge in list(edges.values()):
           source = edge["source"]
           destination = edge["destination"]
           edge_class = edge["_class"]
@@ -145,7 +145,7 @@ def createObjectResourcesAndCoreObjects():
     read the data and create them
     '''
 
-    for (element_id, element) in nodes.iteritems():                 # use an iterator to go through all the nodes
+    for (element_id, element) in nodes.items():                 # use an iterator to go through all the nodes
         element['id'] = element_id                                  # create a new entry for the element (dictionary)
         element = element.copy()
         for k in ('element_id', 'top', 'left'):
@@ -174,7 +174,7 @@ def createObjectResourcesAndCoreObjects():
     read the data and create them
     '''
     from dream.simulation.OperatorPool import OperatorPool
-    for (element_id, element) in nodes.iteritems():                 # use an iterator to go through all the nodes
+    for (element_id, element) in nodes.items():                 # use an iterator to go through all the nodes
                                                                     # the key is the element_id and the second is the 
                                                                     # element itself 
         element = element.copy()
@@ -204,7 +204,7 @@ def createObjectResourcesAndCoreObjects():
     loop through all the elements    
     read the data and create them
     '''
-    for (element_id, element) in nodes.iteritems():
+    for (element_id, element) in nodes.items():
         element = element.copy()
         element['id'] = element_id
         element.setdefault('name', element_id)
@@ -260,7 +260,7 @@ def createObjectInterruptions():
     #            search for Event Generator and create them
     #                   this is put last, since the EventGenerator 
     #                may take other objects as argument
-    for (element_id, element) in nodes.iteritems():                 # use an iterator to go through all the nodes
+    for (element_id, element) in nodes.items():                 # use an iterator to go through all the nodes
                                                                     # the key is the element_id and the second is the 
                                                                     # element itself 
         element['id'] = element_id                                  # create a new entry for the element (dictionary)
@@ -289,7 +289,7 @@ def createObjectInterruptions():
     from dream.simulation.ShiftScheduler import ShiftScheduler
     from dream.simulation.ScheduledBreak import ScheduledBreak
     from dream.simulation.Break import Break
-    for (element_id, element) in nodes.iteritems():
+    for (element_id, element) in nodes.items():
         element['id'] = element_id
         scheduledMaintenance=element.get('interruptions',{}).get('scheduledMaintenance', {})
         # if there is a scheduled maintenance initiate it and append it
@@ -421,7 +421,7 @@ def createWIP():
                 componentsList=prodOrder.get('componentsList', {})
                 # keep a reference of all extra properties passed to the job
                 extraPropertyDict = {}
-                for key, value in prodOrder.items():
+                for key, value in list(prodOrder.items()):
                   if key not in ('_class', 'id'):
                     extraPropertyDict[key] = value
                 # initiate the Order
@@ -441,7 +441,7 @@ def createWIP():
                 
     # read from the dictionary the dicts with key 'nodes'
     nodes = json_data["graph"]['node']
-    for (element_id, element) in nodes.iteritems():
+    for (element_id, element) in nodes.items():
         element['id'] = element_id
         wip=element.get('wip', [])
         from dream.simulation.OrderDesign import OrderDesign
@@ -528,7 +528,7 @@ def createWIP():
                 
                 # keep a reference of all extra properties passed to the job
                 extraPropertyDict = {}
-                for key, value in entity.items():
+                for key, value in list(entity.items()):
                   if key not in ('_class', 'id'):
                     extraPropertyDict[key] = value
 
@@ -643,7 +643,7 @@ def main(argv=[], input_data=None):
       try:                                          # try to open the file with the inputs
           G.JSONFile=open(filename, "r")            # global variable holding the file to be opened
       except IOError:                               
-          print "%s could not be open" % filename
+          print("%s could not be open" % filename)
           return "ERROR"
       G.InputData=G.JSONFile.read()                 # pass the contents of the input file to the global var InputData
     else:
@@ -658,7 +658,7 @@ def main(argv=[], input_data=None):
     setTopology()
 
     #run the experiment (replications)          
-    for i in xrange(G.numberOfReplications):
+    for i in range(G.numberOfReplications):
         G.env=simpy.Environment()                       # initialize the environment
         G.maxSimTime=float(G.JSONData['general'].get('maxSimTime', '100'))     # read the maxSimTime in each replication 
                                                                                # since it may be changed for infinite ones
@@ -692,7 +692,7 @@ def main(argv=[], input_data=None):
             if float(max(endList))!=0 and (G.env.now==float('inf') or G.env.now == max(endList)):    #do not let G.maxSimTime=0 so that there will be no crash
                 G.maxSimTime=float(max(endList))
             else:
-                print "simulation ran for 0 time, something may have gone wrong"
+                print("simulation ran for 0 time, something may have gone wrong")
                 logger.info("simulation ran for 0 time, something may have gone wrong")
         #else we simulate until the given maxSimTime
         else:
@@ -708,8 +708,8 @@ def main(argv=[], input_data=None):
         #output trace to excel      
         if(G.trace=="Yes"):
             ExcelHandler.outputTrace('trace'+str(i))  
-            import StringIO
-            traceStringIO = StringIO.StringIO()
+            import io
+            traceStringIO = io.StringIO()
             G.traceFile.save(traceStringIO)
             encodedTrace=traceStringIO.getvalue().encode('base64')
             ExcelHandler.resetTrace()
@@ -741,7 +741,7 @@ def main(argv=[], input_data=None):
       G.outputJSONFile.write(outputJSONString)
     if not input_data:
       # Output on stdout
-      print outputJSONString
+      print(outputJSONString)
       # XXX I am not sure we still need this case
       return
 

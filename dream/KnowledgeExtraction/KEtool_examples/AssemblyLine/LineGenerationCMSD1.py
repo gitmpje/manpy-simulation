@@ -436,8 +436,8 @@ def main(argv=[], input_data=None):
         filename = argv[0]
         try:                                          # try to open the file with the inputs
             G.CMSDFile=open(filename, "r")            # global variable holding the file to be opened
-        except IOError, IndexError:                               
-            print "%s could not be open" % filename
+        except IOError as IndexError:                               
+            print("%s could not be open" % filename)
             return "ERROR"
         G.InputData=G.CMSDFile.read()                 # pass the contents of the input file to the global var InputData
     else:
@@ -507,7 +507,7 @@ def main(argv=[], input_data=None):
                   
     for proc in G.SubProcessList:
         if proc.isEndProcess:
-            if proc.next:
+            if proc.__next__:
                 M=getMachineByResourceIdentifier(proc.id)
                 Q=getQueueByResourceIdentifier(proc.next.id)
                 M.next.append(Q)
@@ -561,7 +561,7 @@ def main(argv=[], input_data=None):
     
     #run the experiment (replications)          
     for i in range(G.numberOfReplications):
-        print "start run number "+str(i+1) 
+        print("start run number "+str(i+1)) 
         G.env=simpy.Environment()    
         G.seed+=1
         G.Rnd=Random(G.seed)         
@@ -590,12 +590,12 @@ def main(argv=[], input_data=None):
         
 #     #output data to excel for every object in the topology         
     for object in G.ObjList:
-        if object is not 'BatchSource':
+        if object != 'BatchSource':
             continue
         object.outputResultsXL(G.maxSimTime)    
 
     G.outputFile.save("output.xls")      
-    print "execution time="+str(time.time()-start) 
+    print("execution time="+str(time.time()-start)) 
     
     G.outputJSONFile=open('outputJSONFromCMSD.json', mode='w')
     G.outputJSON['_class'] = 'Dream.Simulation';

@@ -3,7 +3,7 @@ import json
 import time
 import random
 import operator
-import StringIO
+import io
 import xlrd
 
 from dream.plugins import plugin
@@ -22,7 +22,7 @@ class ExampleReadAttachedSpreadsheet(plugin.OutputPreparationPlugin):
     
     workbook = xlrd.open_workbook(file_contents=attachement_data)
 
-    print "This spreadsheet contains sheets:", workbook.sheet_names()
+    print("This spreadsheet contains sheets:", workbook.sheet_names())
 
     raise ValueError(workbook.sheet_names())
     
